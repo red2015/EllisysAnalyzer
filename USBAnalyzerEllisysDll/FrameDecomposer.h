@@ -13,7 +13,7 @@
 
 #include "UsbAnalysis.h"
 #include "UsbAnalyzerTracker110.h"
-#include "TrasactionCounter.h"
+#include "TransactionCounter.h"
 #include "StringConverter.h"
 #include "..\shared\Statistics.h"
 

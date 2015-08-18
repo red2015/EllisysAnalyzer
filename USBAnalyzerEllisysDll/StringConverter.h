@@ -7,5 +7,5 @@ std::string WStringToString (const std::wstring& wstr)
 
 std::wstring StringToWString(const std::string& str)
 {
-	return (std::wstring(str.begin(),str.end());
+	return (std::wstring(str.begin(),str.end()));
 }

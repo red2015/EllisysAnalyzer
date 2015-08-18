@@ -195,7 +195,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AnalyzerErrorNotifiacation.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FrameDecomposer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SelectAndCreateAnalyzer.h"
 				>
 			</File>
 			<File
@@ -236,11 +244,11 @@
 				Name="Lib"
 				>
 				<File
-					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2014\cintools\labview.lib"
+					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2015\cintools\labview.lib"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2015\cintools\labview.lib"
+					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2014\cintools\labview.lib"
 					>
 				</File>
 			</Filter>
