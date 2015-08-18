@@ -184,6 +184,10 @@
 				RelativePath=".\stdafx.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\TransactionCounter.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -191,15 +195,55 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\FrameDecomposer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
+			<File
+				RelativePath=".\StringConverter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TransactionCounter.h"
+				>
+			</File>
+			<Filter
+				Name="Shared"
+				>
+				<File
+					RelativePath=".\Shared\Displayers.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Shared\Filters.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Shared\Statistics.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<Filter
+				Name="Lib"
+				>
+				<File
+					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2014\cintools\labview.lib"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2015\cintools\labview.lib"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Doc"
@@ -214,18 +258,6 @@
 			</File>
 			<File
 				RelativePath=".\Doc\usbsdkman_en.pdf"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Lib"
-			>
-			<File
-				RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2015\cintools\labview.lib"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2014\cintools\labview.lib"
 				>
 			</File>
 		</Filter>
