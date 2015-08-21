@@ -59,12 +59,9 @@ Acqusiton()
 int32_t _declspec(dllexport)
 GetFrameStatistics(BYTE *frameIn, BYTE *frameOut, BYTE *frameNak, size_t *sizeFrameIn, size_t *sizeFrameOut, size_t *sizeFrameNak)
 {
-	frameIn = new BYTE[max_frame_bytecount];
-	frameOut = new BYTE[max_frame_bytecount];
-	frameNak = new BYTE[max_frame_bytecount];
-	*sizeFrameIn = max_frame_bytecount;
-	*sizeFrameOut = max_frame_bytecount;
-	*sizeFrameNak = max_frame_bytecount;
+	*sizeFrameIn = sizeof(unsigned char)* max_frame_bytecount;
+	*sizeFrameOut = sizeof(unsigned char)* max_frame_bytecount;
+	*sizeFrameNak = sizeof(unsigned char)* max_frame_bytecount;
 	m_frameDecomposer.GetFrame(frameIn, frameOut, frameNak);
 	return 0;
 }
@@ -76,3 +73,17 @@ StopAcqusiton()
 	return 0;
 }
 
+extern "C" int _declspec(dllexport)
+ZwrocTabChar(unsigned char tabchar[], size_t *sizeOut)
+{
+	unsigned char tab[5];
+	tab[0] = 'A';
+	tab[1] = 'B';
+	tab[2] = 'C';
+	tab[3] = 'D';
+	tab[4] = 'E';
+	*sizeOut = 5;
+	memcpy(tabchar, tab, 3);
+
+	return 0;
+}
