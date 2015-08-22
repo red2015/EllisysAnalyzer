@@ -101,12 +101,9 @@ public:
 
 	void GetFrame(BYTE* pFrameIn, BYTE* pFrameOut, BYTE* pFrameNak)
 	{
-		//CopyMemory(pFrameIn,  &m_frameIn[0],  m_frameIn.size());
-		//CopyMemory(pFrameOut, &m_frameOut[0], m_frameOut.size());
-		//CopyMemory(pFrameNak, &m_frameNak[0], m_frameNak.size());
-		memcpy(pFrameIn,  &m_frameIn[0],  m_frameIn.size());
-		memcpy(pFrameOut, &m_frameOut[0], m_frameOut.size());
-		memcpy(pFrameNak, &m_frameNak[0], m_frameNak.size());
+		CopyMemory(pFrameIn,  &m_frameIn[0],  m_frameIn.size());
+		CopyMemory(pFrameOut, &m_frameOut[0], m_frameOut.size());
+		CopyMemory(pFrameNak, &m_frameNak[0], m_frameNak.size());
 	}
 
 	void Clear()
