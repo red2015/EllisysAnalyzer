@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "USBAnalyzerEllisysDll", "USBAnalyzerEllisysDll.vcproj", "{9BBA4BB9-D8D6-4445-94E5-178AC59A0560}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DllTests", "..\DllTests\DllTests.vcproj", "{D8A05182-B4CC-47E9-9687-D0E1121495BE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9BBA4BB9-D8D6-4445-94E5-178AC59A0560} = {9BBA4BB9-D8D6-4445-94E5-178AC59A0560}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +18,10 @@ Global
 		{9BBA4BB9-D8D6-4445-94E5-178AC59A0560}.Debug|Win32.Build.0 = Debug|Win32
 		{9BBA4BB9-D8D6-4445-94E5-178AC59A0560}.Release|Win32.ActiveCfg = Release|Win32
 		{9BBA4BB9-D8D6-4445-94E5-178AC59A0560}.Release|Win32.Build.0 = Release|Win32
+		{D8A05182-B4CC-47E9-9687-D0E1121495BE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D8A05182-B4CC-47E9-9687-D0E1121495BE}.Debug|Win32.Build.0 = Debug|Win32
+		{D8A05182-B4CC-47E9-9687-D0E1121495BE}.Release|Win32.ActiveCfg = Release|Win32
+		{D8A05182-B4CC-47E9-9687-D0E1121495BE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

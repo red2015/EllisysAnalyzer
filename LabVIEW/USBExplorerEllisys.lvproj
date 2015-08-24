@@ -12,23 +12,29 @@
 		<Property Name="specify.custom.address" Type="Bool">false</Property>
 		<Item Name="AnalyzerStuff" Type="Folder">
 			<Item Name="Acqusiton.vi" Type="VI" URL="../Acqusiton.vi"/>
+			<Item Name="DecreaseFrame.vi" Type="VI" URL="../DecreaseFrame.vi"/>
 			<Item Name="FindAnalyzer.vi" Type="VI" URL="../FindAnalyzer.vi"/>
+			<Item Name="GetFrameStatistics.vi" Type="VI" URL="../GetFrameStatistics.vi"/>
 			<Item Name="GetSerialNumber.vi" Type="VI" URL="../GetSerialNumber.vi"/>
 			<Item Name="StopAcquisition.vi" Type="VI" URL="../StopAcquisition.vi"/>
 		</Item>
-		<Item Name="ChartRectangle" Type="Folder">
-			<Item Name="ChartBar.vi" Type="VI" URL="../ChartBar.vi"/>
+		<Item Name="Charts" Type="Folder">
+			<Item Name="Example" Type="Folder">
+				<Item Name="XY bar graph .vi" Type="VI" URL="../../../../Downloads/XY bar graph .vi"/>
+				<Item Name="XyBarGraphTests.vi" Type="VI" URL="../XyBarGraphTests.vi"/>
+			</Item>
+			<Item Name="BarChart.vi" Type="VI" URL="../BarChart.vi"/>
+			<Item Name="min(a,b).vi" Type="VI" URL="../min(a,b).vi"/>
+			<Item Name="piechart.vi" Type="VI" URL="../piechart.vi"/>
 		</Item>
 		<Item Name="TestFindingAnalyzer" Type="Folder">
 			<Item Name="Tests.vi" Type="VI" URL="../Tests.vi"/>
 		</Item>
-		<Item Name="GetFrameStatistics.vi" Type="VI" URL="../GetFrameStatistics.vi"/>
-		<Item Name="piechart.vi" Type="VI" URL="../piechart.vi"/>
-		<Item Name="Test2.vi" Type="VI" URL="../Test2.vi"/>
-		<Item Name="testUnsignedChar.vi" Type="VI" URL="../testUnsignedChar.vi"/>
-		<Item Name="Untitled 1.vi" Type="VI" URL="../Untitled 1.vi"/>
-		<Item Name="XY bar graph .vi" Type="VI" URL="../../../../Downloads/XY bar graph .vi"/>
-		<Item Name="XyBarGraphTests.vi" Type="VI" URL="../XyBarGraphTests.vi"/>
+		<Item Name="Tests" Type="Folder">
+			<Item Name="Test2.vi" Type="VI" URL="../Test2.vi"/>
+			<Item Name="testUnsignedChar.vi" Type="VI" URL="../testUnsignedChar.vi"/>
+		</Item>
+		<Item Name="ChartTesting.vi" Type="VI" URL="../ChartTesting.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
 				<Item Name="BuildHelpPath.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/BuildHelpPath.vi"/>

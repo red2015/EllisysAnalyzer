@@ -8,6 +8,7 @@
 #include <conio.h>
 #include <windows.h> 
 #include <extcode.h>
+#include <iostream>
 using namespace usbdk;
 using namespace std;
 
@@ -17,6 +18,10 @@ bool stop = false;
 UsbFrameDecomposer m_frameDecomposer1;
 bool g_analyzerErrorOccured = false;
 bool acqusition = false;
+BYTE frameIn1[max_frame_bytecount];
+BYTE frameOut1[max_frame_bytecount];
+BYTE frameNak1[max_frame_bytecount];
+
 
 void AnalyzerErrorNotification(usb_analyzer_error error, usb_analyzer_error_notification_param param, const void* param2)
 {
@@ -133,6 +138,7 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 	// Type a key to stop the acquisition...
 	for(;;)
 	{
+		m_frameDecomposer1.GetFrame(frameIn1, frameOut1, frameNak1);
 		if(_kbhit())
 		{
 			_getch();
@@ -165,6 +171,7 @@ GetAnalyzerSerialNumber(size_t *sizeOut,char *myString)
 extern "C" int _declspec(dllexport)
 FindAnalyzer()
 {
+	
 	UsbAnalyzerFactoryManager analyzerFactoryManager;
 	UsbExplorer200_RegisterAnalyzerFactory(&analyzerFactoryManager);
 	spAnalyzer = SelectAndCreateAnalyzer(&analyzerFactoryManager, serialNumber);
@@ -179,48 +186,41 @@ FindAnalyzer()
 extern "C" int _declspec(dllexport)
 Acqusiton()
 {
-	if(acqusition == true)
-	{
 		if(spAnalyzer == NULL)
 		{
 			return -1;
 		}
-		acqusition = true;
 		DoAcquisition(spAnalyzer);
+		acqusition = true;
+		
 		if(g_analyzerErrorOccured == true)
 		{
 			return -1;
 		}
 		return 0;
-	}
-	return 0;
 }
 
-//int32_t _declspec(dllexport)
-//GetFrameStatistics(BYTE frameIn[], BYTE frameOut[], BYTE frameNak[], size_t *sizeFrameIn, size_t *sizeFrameOut, size_t *sizeFrameNak)
-//{
-//	*sizeFrameIn = sizeof(unsigned char)* max_frame_bytecount;
-//	*sizeFrameOut = sizeof(unsigned char)* max_frame_bytecount;
-//	*sizeFrameNak = sizeof(unsigned char)* max_frame_bytecount;
-//	m_frameDecomposer1.GetFrame(frameIn, frameOut, frameNak);
-//	return 0;
-//}
 
 extern "C" int _declspec(dllexport)
 GetFrameStatistics(uint8_t *frameIn[], uint8_t *frameOut[], uint8_t *frameNak[], size_t *sizeFrameIn, size_t *sizeFrameOut, size_t *sizeFrameNak)
 {
-	
+			
 		*sizeFrameIn = sizeof(unsigned char)* max_frame_bytecount;
 		*sizeFrameOut = sizeof(unsigned char)* max_frame_bytecount;
 		*sizeFrameNak = sizeof(unsigned char)* max_frame_bytecount;
-		BYTE frameIn1[max_frame_bytecount];
-		BYTE frameOut1[max_frame_bytecount];
-		BYTE frameNak1[max_frame_bytecount];
 		m_frameDecomposer1.GetFrame(frameIn1, frameOut1, frameNak1);
 		memcpy(frameIn, frameIn1, max_frame_bytecount);
 		memcpy(frameOut, frameOut1, max_frame_bytecount);
 		memcpy(frameNak, frameNak1, max_frame_bytecount);
 		return frameIn1[33];
+}
+
+extern "C" int _declspec(dllexport)
+DecreaseFrame()
+{
+	Sleep(10);
+	m_frameDecomposer1.DecreaseAll();
+	return 0;
 }
 
 extern "C" int _declspec(dllexport)

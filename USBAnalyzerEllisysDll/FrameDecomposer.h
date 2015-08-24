@@ -31,6 +31,8 @@ private:
 	vector_byte m_frameIn;
 	vector_byte m_frameOut;
 	vector_byte m_frameNak;
+
+
 	usbdk::usb_time m_lastSofTime;
 	WORD m_sofCount;
 	bool m_sofHighSpeed;
