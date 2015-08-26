@@ -20,10 +20,12 @@
 		</Item>
 		<Item Name="Charts" Type="Folder">
 			<Item Name="Example" Type="Folder">
-				<Item Name="XY bar graph .vi" Type="VI" URL="../../../../Downloads/XY bar graph .vi"/>
+				<Item Name="XY bar graph(1) .vi" Type="VI" URL="../XY bar graph(1) .vi"/>
+				<Item Name="xy_bar_graph.vi" Type="VI" URL="../../../../Downloads/xy_bar_graph.vi"/>
 				<Item Name="XyBarGraphTests.vi" Type="VI" URL="../XyBarGraphTests.vi"/>
 			</Item>
 			<Item Name="BarChart.vi" Type="VI" URL="../BarChart.vi"/>
+			<Item Name="BarChart2.vi" Type="VI" URL="../BarChart2.vi"/>
 			<Item Name="min(a,b).vi" Type="VI" URL="../min(a,b).vi"/>
 			<Item Name="piechart.vi" Type="VI" URL="../piechart.vi"/>
 		</Item>
@@ -61,6 +63,7 @@
 				<Item Name="LVBoundsTypeDef.ctl" Type="VI" URL="/&lt;vilib&gt;/Utility/miscctls.llb/LVBoundsTypeDef.ctl"/>
 				<Item Name="LVRectTypeDef.ctl" Type="VI" URL="/&lt;vilib&gt;/Utility/miscctls.llb/LVRectTypeDef.ctl"/>
 				<Item Name="Not Found Dialog.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Not Found Dialog.vi"/>
+				<Item Name="RGB to Color.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/colorconv.llb/RGB to Color.vi"/>
 				<Item Name="Search and Replace Pattern.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Search and Replace Pattern.vi"/>
 				<Item Name="Set Bold Text.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Set Bold Text.vi"/>
 				<Item Name="Set Pen State.vi" Type="VI" URL="/&lt;vilib&gt;/picture/picture.llb/Set Pen State.vi"/>
