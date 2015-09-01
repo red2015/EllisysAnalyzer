@@ -19,6 +19,11 @@
 			<Item Name="StopAcquisition.vi" Type="VI" URL="../StopAcquisition.vi"/>
 		</Item>
 		<Item Name="Charts" Type="Folder">
+			<Item Name="Chart stuff" Type="Folder">
+				<Item Name="GetCountAllTransactions.vi" Type="VI" URL="../GetCountAllTransactions.vi"/>
+				<Item Name="GetCountOfTransactionsInOutNak.vi" Type="VI" URL="../GetCountOfTransactionsInOutNak.vi"/>
+				<Item Name="min(a,b).vi" Type="VI" URL="../min(a,b).vi"/>
+			</Item>
 			<Item Name="Example" Type="Folder">
 				<Item Name="XY bar graph(1) .vi" Type="VI" URL="../XY bar graph(1) .vi"/>
 				<Item Name="xy_bar_graph.vi" Type="VI" URL="../../../../Downloads/xy_bar_graph.vi"/>
@@ -26,7 +31,7 @@
 			</Item>
 			<Item Name="BarChart.vi" Type="VI" URL="../BarChart.vi"/>
 			<Item Name="BarChart2.vi" Type="VI" URL="../BarChart2.vi"/>
-			<Item Name="min(a,b).vi" Type="VI" URL="../min(a,b).vi"/>
+			<Item Name="FrameChart.vi" Type="VI" URL="../FrameChart.vi"/>
 			<Item Name="piechart.vi" Type="VI" URL="../piechart.vi"/>
 		</Item>
 		<Item Name="TestFindingAnalyzer" Type="Folder">
@@ -37,7 +42,6 @@
 			<Item Name="testUnsignedChar.vi" Type="VI" URL="../testUnsignedChar.vi"/>
 		</Item>
 		<Item Name="ChartTesting.vi" Type="VI" URL="../ChartTesting.vi"/>
-		<Item Name="TestFrameChart.vi" Type="VI" URL="../TestFrameChart.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
 				<Item Name="BuildHelpPath.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/BuildHelpPath.vi"/>

@@ -65,6 +65,7 @@ public:
 		case usbdk::elementStartOfFrame:
 			m_sofHighSpeed = ((usbdk::UsbStartOfFrame*) pElement)->GetSpeed() == usbdk::speedHigh;
 			m_lastSofTime = pElement->GetTime();
+			transactionCounter.IncrementTokenSOF();
 			break;
 
 		case usbdk::elementKeepAlive:
@@ -131,6 +132,26 @@ public:
 	{
 		return transactionCounter.GetCountNAK();
 	}
+	unsigned long GetCountTransactionsTokenSetup()
+	{
+		return transactionCounter.GetCountTokenSetup();
+	}
+	unsigned long GetCountTransactionsTokenSOF()
+	{
+		return transactionCounter.GetCountTokenSOF();
+	}
+	unsigned long GetCountTransactionsData0()
+	{
+		return transactionCounter.GetCountData0();
+	}
+	unsigned long GetCountTransactionsData1()
+	{
+		return transactionCounter.GetCountData1();
+	}
+	unsigned long GetCountTransactionsACK()
+	{
+		return transactionCounter.GetCountACK();
+	}
 
 private:
 	BYTE DecreaseCount(BYTE value)
@@ -193,6 +214,26 @@ private:
 				pFrame = &m_frameOut;
 				transactionCounter.IncrementTokenOut();
 			}
+			if(pTransaction->GetHandshakePacket().GetPID() == usbdk::pidACK)
+			{
+				transactionCounter.IncrementACK();
+			}
+			if(pTransaction->GetTokenPacket().GetPID() == usbdk::pidSETUP)
+			{
+				transactionCounter.IncrementTokenSetup();
+			}
+			if(pTransaction->GetTokenPacket().GetPID() == usbdk::pidSOF)
+			{	
+				transactionCounter.IncrementTokenSOF();
+			}
+			if(pTransaction->GetDataPacket().GetPID() == usbdk::pidDATA0)
+			{
+				transactionCounter.IncrementData0();
+			}
+			if(pTransaction->GetDataPacket().GetPID() == usbdk::pidDATA1)
+			{
+				transactionCounter.IncrementData1();
+			}
 		}
 
 		ASSERT(pFrame != NULL);
@@ -221,6 +262,26 @@ private:
 			{
 				pFrame = &m_frameOut;
 				transactionCounter.IncrementTokenOut();
+			}
+			if(pSplitTransaction->GetHandshakePacket().GetPID() == usbdk::pidACK)
+			{
+				transactionCounter.IncrementACK();
+			}
+			if(pSplitTransaction->GetTokenPacket().GetPID() == usbdk::pidSETUP)
+			{
+				transactionCounter.GetCountTokenSetup();
+			}
+			if(pSplitTransaction->GetTokenPacket().GetPID() == usbdk::pidSOF)
+			{	
+				transactionCounter.IncrementTokenSOF();
+			}
+			if(pSplitTransaction->GetDataPacket().GetPID() == usbdk::pidDATA0)
+			{
+				transactionCounter.IncrementData0();
+			}
+			if(pSplitTransaction->GetDataPacket().GetPID() == usbdk::pidDATA1)
+			{
+				transactionCounter.IncrementData1();
 			}
 		}
 

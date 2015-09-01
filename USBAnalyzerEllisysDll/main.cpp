@@ -240,6 +240,20 @@ GetCountOfTransactionInOutNak(unsigned long *in, unsigned long *out, unsigned lo
 }
 
 extern "C" int _declspec(dllexport)
+GetCountAllTransactions(unsigned long *in, unsigned long  *out, unsigned long  *setup, unsigned long  *sof, unsigned long  *data0, unsigned long  *data1, unsigned long  *ack, unsigned long  *nak)
+{
+	*in = m_frameDecomposer1.GetCountTransactionsIn();
+	*out = m_frameDecomposer1.GetCountTransactionsOut();
+	*setup = m_frameDecomposer1.GetCountTransactionsTokenSetup();
+	*sof = m_frameDecomposer1.GetCountTransactionsTokenSOF();
+	*data0 = m_frameDecomposer1.GetCountTransactionsData0();
+	*data1 = m_frameDecomposer1.GetCountTransactionsData1();
+	*ack = m_frameDecomposer1.GetCountTransactionsACK();
+	*nak = m_frameDecomposer1.GetCountTransactionsNak();
+	return 0;
+}
+
+extern "C" int _declspec(dllexport)
 ZwrocTabChar(uint8_t *tabchar, size_t *sizeOut)
 {
 	unsigned char tab[5];
