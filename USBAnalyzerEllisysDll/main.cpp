@@ -230,6 +230,14 @@ StopAcqusiton()
 	return 0;
 }
 
+extern "C" int _declspec(dllexport)
+GetCountOfTransactionInOutNak(unsigned long *in, unsigned long *out, unsigned long *nak)
+{
+	*in = m_frameDecomposer1.GetCountTransactionsIn();
+	*out = m_frameDecomposer1.GetCountTransactionsOut();
+	*nak = m_frameDecomposer1.GetCountTransactionsNak();
+	return 0;
+}
 
 extern "C" int _declspec(dllexport)
 ZwrocTabChar(uint8_t *tabchar, size_t *sizeOut)

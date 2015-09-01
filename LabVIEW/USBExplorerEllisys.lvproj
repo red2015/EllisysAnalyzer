@@ -37,6 +37,7 @@
 			<Item Name="testUnsignedChar.vi" Type="VI" URL="../testUnsignedChar.vi"/>
 		</Item>
 		<Item Name="ChartTesting.vi" Type="VI" URL="../ChartTesting.vi"/>
+		<Item Name="TestFrameChart.vi" Type="VI" URL="../TestFrameChart.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
 				<Item Name="BuildHelpPath.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/BuildHelpPath.vi"/>

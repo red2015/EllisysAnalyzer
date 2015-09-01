@@ -16,6 +16,7 @@
 #include "TransactionCounter.h"
 #include "StringConverter.h"
 #include "..\shared\Statistics.h"
+#include "TransactionCounter.h"
 
 static const BYTE max_frame_value = 255;
 static const size_t max_frame_bytecount = highspeed_frame_bytecount;
@@ -31,7 +32,7 @@ private:
 	vector_byte m_frameIn;
 	vector_byte m_frameOut;
 	vector_byte m_frameNak;
-
+	TransactionCounter transactionCounter;
 
 	usbdk::usb_time m_lastSofTime;
 	WORD m_sofCount;
@@ -46,6 +47,7 @@ public:
 		m_sofCount(0),
 		m_sofHighSpeed(false)
 	{
+		transactionCounter = TransactionCounter();
 	}
 
 public:
@@ -117,6 +119,19 @@ public:
 		ZeroMemory(&m_frameNak[0], m_frameNak.size());
 	}
 
+	unsigned long GetCountTransactionsIn()
+	{
+		return transactionCounter.GetCountTokenIn();
+	}
+	unsigned long GetCountTransactionsOut()
+	{
+		return transactionCounter.GetCountTokenOut();
+	}
+	unsigned long GetCountTransactionsNak()
+	{
+		return transactionCounter.GetCountNAK();
+	}
+
 private:
 	BYTE DecreaseCount(BYTE value)
 	{
@@ -164,16 +179,19 @@ private:
 		if(pTransaction->GetHandshakePacket().GetPID() == usbdk::pidNAK)
 		{
 			pFrame = &m_frameNak;
+			transactionCounter.IncrementNAK();
 		}
 		else
 		{
 			if(pTransaction->GetTokenPacket().GetPID() == usbdk::pidIN)
 			{
 				pFrame = &m_frameIn;
+				transactionCounter.IncrementTokenIn();
 			}
 			else
 			{
 				pFrame = &m_frameOut;
+				transactionCounter.IncrementTokenOut();
 			}
 		}
 
@@ -190,16 +208,19 @@ private:
 		if(pSplitTransaction->GetHandshakePacket().GetPID() == usbdk::pidNAK)
 		{
 			pFrame = &m_frameNak;
+			transactionCounter.IncrementNAK();
 		}
 		else
 		{
 			if(pSplitTransaction->GetTokenPacket().GetPID() == usbdk::pidIN)
 			{
 				pFrame = &m_frameIn;
+				transactionCounter.IncrementTokenIn();
 			}
 			else
 			{
 				pFrame = &m_frameOut;
+				transactionCounter.IncrementTokenOut();
 			}
 		}
 
