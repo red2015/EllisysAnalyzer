@@ -9,18 +9,31 @@
 #include <windows.h> 
 #include <extcode.h>
 #include <iostream>
+#include <ctime>
+#include <time.h>
 using namespace usbdk;
 using namespace std;
 
-std::wstring serialNumber;
+#define TEN_MILLISECUND 10
+
+std::wstring g_serialNumber;
 RefCountPtr<IUsbAnalyzer> spAnalyzer;
-bool stop = false;
-UsbFrameDecomposer m_frameDecomposer1;
+bool g_stopAcqusition = false;
 bool g_analyzerErrorOccured = false;
-bool acqusition = false;
-BYTE frameIn1[max_frame_bytecount];
-BYTE frameOut1[max_frame_bytecount];
-BYTE frameNak1[max_frame_bytecount];
+bool g_overflowOccured = false;
+
+BYTE g_frameIn[max_frame_bytecount];
+BYTE g_frameOut[max_frame_bytecount];
+BYTE g_frameNak[max_frame_bytecount];
+
+unsigned long g_packetsTokenIn = 0;
+unsigned long g_packetsTokenOut = 0;
+unsigned long g_packetsTokenSetup = 0;
+unsigned long g_packetsTokenSOF = 0;
+unsigned long g_packetsData0 = 0;
+unsigned long g_packetsData1 = 0;
+unsigned long g_packetsHandshakeACK = 0;
+unsigned long g_packetsHandshakeNAK = 0;
 
 
 void AnalyzerErrorNotification(usb_analyzer_error error, usb_analyzer_error_notification_param param, const void* param2)
@@ -39,6 +52,11 @@ void AnalyzerErrorNotification(usb_analyzer_error error, usb_analyzer_error_noti
 	TCHAR szBuffer[600];
 
 	g_analyzerErrorOccured = true;
+
+	if(error == 1)
+	{
+		g_overflowOccured = true;
+	}
 
 	if(param2 != NULL)
 	{
@@ -110,10 +128,14 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 	//
 	// Prepare chainable element sinks
 	//
+	UsbFrameDecomposer m_frameDecomposer;
 	ChainableUsbElementSinkManager sinkChainer;
-	stop = false;
-
-	sinkChainer.AddElementSink(&m_frameDecomposer1);
+	g_stopAcqusition = false;
+	g_analyzerErrorOccured = false;
+	g_overflowOccured = false;
+	
+	m_frameDecomposer.SetAllTrasactions(g_packetsTokenIn, g_packetsTokenOut,g_packetsTokenSetup, g_packetsTokenSOF, g_packetsData0, g_packetsData1, g_packetsHandshakeNAK, g_packetsHandshakeACK);
+	sinkChainer.AddElementSink(&m_frameDecomposer);
 	_tprintf(_T("\n"));
 
 	//
@@ -134,21 +156,38 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 	{
 		_tprintf(_T("\nException caught!\n%s\n"), e.what());
 	}
-
+	int inc = 0;
+	printf("zapierniczam \n");
+	clock_t actualTime, oldTime = 0;
 	// Type a key to stop the acquisition...
 	for(;;)
 	{
-		m_frameDecomposer1.GetFrame(frameIn1, frameOut1, frameNak1);
 		if(_kbhit())
 		{
 			_getch();
 			break;
 		}
-
-		if(g_analyzerErrorOccured || stop)
+	
+		if(g_analyzerErrorOccured || g_stopAcqusition)
 		{
 			break;
 		}
+		actualTime = clock();
+		
+		if(long(actualTime-oldTime) > 10)
+		{
+			m_frameDecomposer.DecreaseAll();
+		}
+		m_frameDecomposer.GetFrame(g_frameIn, g_frameOut, g_frameNak);
+		g_packetsTokenIn = m_frameDecomposer.GetCountTransactionsIn();
+		g_packetsTokenOut = m_frameDecomposer.GetCountTransactionsOut();
+		g_packetsTokenSetup = m_frameDecomposer.GetCountTransactionsTokenSetup();
+		g_packetsTokenSOF = m_frameDecomposer.GetCountTransactionsTokenSOF();
+		g_packetsData0 = m_frameDecomposer.GetCountTransactionsData0();
+		g_packetsData1 = m_frameDecomposer.GetCountTransactionsData1();
+		g_packetsHandshakeACK = m_frameDecomposer.GetCountTransactionsACK();
+		g_packetsHandshakeNAK = m_frameDecomposer.GetCountTransactionsNak();
+		oldTime = actualTime;
 	}
 
 	pAnalyzer->EndAcquisition();
@@ -160,9 +199,9 @@ GetAnalyzerSerialNumber(size_t *sizeOut,char *myString)
 {
 	char *out;
 	size_t lenSerialNumber = 0;
-	lenSerialNumber = wcslen(serialNumber.c_str());
+	lenSerialNumber = wcslen(g_serialNumber.c_str());
 	out = (char*) malloc(sizeof(char)*lenSerialNumber);
-	wcstombs(out, serialNumber.c_str(), lenSerialNumber);
+	wcstombs(out, g_serialNumber.c_str(), lenSerialNumber);
 	*sizeOut = lenSerialNumber;
 	memcpy(myString, out, lenSerialNumber);
 	return 0;
@@ -174,104 +213,69 @@ FindAnalyzer()
 	
 	UsbAnalyzerFactoryManager analyzerFactoryManager;
 	UsbExplorer200_RegisterAnalyzerFactory(&analyzerFactoryManager);
-	spAnalyzer = SelectAndCreateAnalyzer(&analyzerFactoryManager, serialNumber);
+	spAnalyzer = SelectAndCreateAnalyzer(&analyzerFactoryManager, g_serialNumber);
 	if(spAnalyzer == NULL)
 	{
 		return -1;
 	}
-	serialNumber = spAnalyzer->GetSerialNumber().c_str();
+	g_serialNumber = spAnalyzer->GetSerialNumber().c_str();
 	return 0;
 }
 
 extern "C" int _declspec(dllexport)
 Acqusiton()
 {
-		if(spAnalyzer == NULL)
-		{
-			return -1;
-		}
+	if(spAnalyzer == NULL)
+	{
+		return -1;
+	}	
+	do
+	{
 		DoAcquisition(spAnalyzer);
-		acqusition = true;
-		
-		if(g_analyzerErrorOccured == true)
-		{
-			return -1;
-		}
-		return 0;
+	}while(g_overflowOccured == true);
+	return 0;
 }
 
 
 extern "C" int _declspec(dllexport)
 GetFrameStatistics(uint8_t *frameIn[], uint8_t *frameOut[], uint8_t *frameNak[], size_t *sizeFrameIn, size_t *sizeFrameOut, size_t *sizeFrameNak)
-{
-			
-		*sizeFrameIn = sizeof(unsigned char)* max_frame_bytecount;
-		*sizeFrameOut = sizeof(unsigned char)* max_frame_bytecount;
-		*sizeFrameNak = sizeof(unsigned char)* max_frame_bytecount;
-		m_frameDecomposer1.GetFrame(frameIn1, frameOut1, frameNak1);
-		memcpy(frameIn, frameIn1, max_frame_bytecount);
-		memcpy(frameOut, frameOut1, max_frame_bytecount);
-		memcpy(frameNak, frameNak1, max_frame_bytecount);
-		return frameIn1[33];
-}
-
-extern "C" int _declspec(dllexport)
-DecreaseFrame()
-{
-	Sleep(10);
-	m_frameDecomposer1.DecreaseAll();
+{		
+	*sizeFrameIn = sizeof(unsigned char)* max_frame_bytecount;
+	*sizeFrameOut = sizeof(unsigned char)* max_frame_bytecount;
+	*sizeFrameNak = sizeof(unsigned char)* max_frame_bytecount;
+	memcpy(frameIn, g_frameIn, max_frame_bytecount);
+	memcpy(frameOut, g_frameOut, max_frame_bytecount);
+	memcpy(frameNak, g_frameNak, max_frame_bytecount);
 	return 0;
 }
 
 extern "C" int _declspec(dllexport)
 StopAcqusiton()
 {
-	stop = true;
+	g_stopAcqusition = true;
 	return 0;
 }
 
 extern "C" int _declspec(dllexport)
 GetCountOfTransactionInOutNak(unsigned long *in, unsigned long *out, unsigned long *nak)
 {
-	*in = m_frameDecomposer1.GetCountTransactionsIn();
-	*out = m_frameDecomposer1.GetCountTransactionsOut();
-	*nak = m_frameDecomposer1.GetCountTransactionsNak();
+	*in = g_packetsTokenIn;
+	*out = g_packetsTokenOut;
+	*nak = g_packetsHandshakeNAK;
 	return 0;
 }
 
 extern "C" int _declspec(dllexport)
 GetCountAllTransactions(unsigned long *in, unsigned long  *out, unsigned long  *setup, unsigned long  *sof, unsigned long  *data0, unsigned long  *data1, unsigned long  *ack, unsigned long  *nak)
 {
-	*in = m_frameDecomposer1.GetCountTransactionsIn();
-	*out = m_frameDecomposer1.GetCountTransactionsOut();
-	*setup = m_frameDecomposer1.GetCountTransactionsTokenSetup();
-	*sof = m_frameDecomposer1.GetCountTransactionsTokenSOF();
-	*data0 = m_frameDecomposer1.GetCountTransactionsData0();
-	*data1 = m_frameDecomposer1.GetCountTransactionsData1();
-	*ack = m_frameDecomposer1.GetCountTransactionsACK();
-	*nak = m_frameDecomposer1.GetCountTransactionsNak();
+	*in = g_packetsTokenIn;
+	*out = g_packetsTokenOut;
+	*setup = g_packetsTokenSetup;
+	*sof = g_packetsTokenSOF;
+	*data0 = g_packetsData0;
+	*data1 = g_packetsData1;
+	*ack = g_packetsHandshakeACK;
+	*nak = g_packetsHandshakeNAK;
 	return 0;
-}
-
-extern "C" int _declspec(dllexport)
-ZwrocTabChar(uint8_t *tabchar, size_t *sizeOut)
-{
-	unsigned char tab[5];
-	tab[0] = 'A';
-	tab[1] = 'B';
-	tab[2] = 'C';
-	tab[3] = 'D';
-	tab[4] = 'E';
-	*sizeOut = 5;
-	//tabchar = (uint8_t*) malloc(sizeof(uint8_t)*5);
-	memcpy(tabchar, tab, 5);
-	return tab[2];
-}
-
-extern "C" int _declspec(dllexport)
-ZwrocChar(unsigned char char_)
-{
-	char_ = 1;
-	return char_;
 }
 

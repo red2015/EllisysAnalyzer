@@ -153,6 +153,11 @@ public:
 		return transactionCounter.GetCountACK();
 	}
 
+	void SetAllTrasactions(unsigned long in, unsigned long out, unsigned long setup, unsigned long sof, unsigned long data0, unsigned long data1, unsigned long nak, unsigned long ack)
+	{
+		transactionCounter.SetActualTransactions(in, out, setup, sof, data0, data1, nak, ack);
+	}
+
 private:
 	BYTE DecreaseCount(BYTE value)
 	{

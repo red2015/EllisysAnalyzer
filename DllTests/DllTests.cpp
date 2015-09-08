@@ -21,6 +21,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	FindAnalyzer();
 	Acqusiton();
+
 	return 0;
 }
 

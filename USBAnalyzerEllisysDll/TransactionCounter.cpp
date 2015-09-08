@@ -96,3 +96,15 @@ void TransactionCounter::IncrementNAK(void)
 {
 	packetsHandshakeNAK++;
 }
+
+void TransactionCounter::SetActualTransactions(unsigned long in, unsigned long out, unsigned long setup, unsigned long sof, unsigned long data0, unsigned long data1, unsigned long nak, unsigned long ack)
+{
+	packetsTokenIn = in;
+	packetsTokenOut = out;
+	packetsTokenSetup = setup;
+	packetsTokenSOF = sof;
+	packetsData0 = data0;
+	packetsData1 = data1;
+	packetsHandshakeNAK = nak;
+	packetsHandshakeACK = ack;
+}

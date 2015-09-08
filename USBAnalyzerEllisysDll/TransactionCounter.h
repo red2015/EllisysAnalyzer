@@ -33,4 +33,5 @@ public:
 	void IncrementData1(void);
 	void IncrementACK(void);
 	void IncrementNAK(void);
+	void SetActualTransactions(unsigned long in, unsigned long out, unsigned long setup, unsigned long sof, unsigned long data0, unsigned long data1, unsigned long nak, unsigned long ack);
 };
