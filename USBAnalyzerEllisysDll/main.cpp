@@ -174,7 +174,7 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 		}
 		actualTime = clock();
 		
-		if(long(actualTime-oldTime) > 10)
+		if(long(actualTime-oldTime) > 5)
 		{
 			m_frameDecomposer.DecreaseAll();
 		}

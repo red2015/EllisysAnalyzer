@@ -39,7 +39,6 @@
 		</Item>
 		<Item Name="Tests" Type="Folder">
 			<Item Name="Test2.vi" Type="VI" URL="../Test2.vi"/>
-			<Item Name="testUnsignedChar.vi" Type="VI" URL="../testUnsignedChar.vi"/>
 		</Item>
 		<Item Name="ChartTesting.vi" Type="VI" URL="../ChartTesting.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
