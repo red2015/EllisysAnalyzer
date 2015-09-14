@@ -74,12 +74,20 @@ public:
 			break;
 
 		case usbdk::elementTransaction:
-			IncreaseTransaction((usbdk::UsbTransaction*) pElement, 10);
-			break;
+			{
+				usbdk::UsbTransaction* transaction = (usbdk::UsbTransaction*) pElement;
+				printf("\ndeviceAdd: %d", (int)transaction->GetDeviceAddress());
+				IncreaseTransaction((usbdk::UsbTransaction*) pElement, 10);
+				break;
+			}
 
 		case usbdk::elementSplitTransaction:
-			IncreaseSplitTransaction((usbdk::UsbSplitTransaction*) pElement, 10);
-			break;
+			{
+				usbdk::UsbSplitTransaction* splitTransaction = (usbdk::UsbSplitTransaction*) pElement;
+				printf("\nhubport: %d", (int)splitTransaction->GetSplitPacket().GetHubPort());
+				IncreaseSplitTransaction((usbdk::UsbSplitTransaction*) pElement, 10);
+				break;
+			}
 
 		case usbdk::elementReset:
 			Clear();
@@ -250,7 +258,7 @@ private:
 	void IncreaseSplitTransaction(usbdk::UsbSplitTransaction* pSplitTransaction, BYTE count)
 	{
 		vector_byte* pFrame = NULL;
-
+		
 		if(pSplitTransaction->GetHandshakePacket().GetPID() == usbdk::pidNAK)
 		{
 			pFrame = &m_frameNak;
@@ -288,6 +296,8 @@ private:
 			{
 				transactionCounter.IncrementData1();
 			}
+			
+			
 		}
 
 		ASSERT(pFrame != NULL);

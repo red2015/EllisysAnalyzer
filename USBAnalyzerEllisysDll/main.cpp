@@ -157,8 +157,8 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 		_tprintf(_T("\nException caught!\n%s\n"), e.what());
 	}
 	int inc = 0;
-	printf("zapierniczam \n");
-	clock_t actualTime, oldTime = 0;
+	clock_t actualTime, oldTime = clock();
+	printf("\nZapylam");
 	// Type a key to stop the acquisition...
 	for(;;)
 	{
@@ -174,9 +174,10 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 		}
 		actualTime = clock();
 		
-		if(long(actualTime-oldTime) > 5)
+		if(long(actualTime-oldTime) > TEN_MILLISECUND)
 		{
 			m_frameDecomposer.DecreaseAll();
+			oldTime = actualTime;
 		}
 		m_frameDecomposer.GetFrame(g_frameIn, g_frameOut, g_frameNak);
 		g_packetsTokenIn = m_frameDecomposer.GetCountTransactionsIn();
@@ -187,7 +188,6 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 		g_packetsData1 = m_frameDecomposer.GetCountTransactionsData1();
 		g_packetsHandshakeACK = m_frameDecomposer.GetCountTransactionsACK();
 		g_packetsHandshakeNAK = m_frameDecomposer.GetCountTransactionsNak();
-		oldTime = actualTime;
 	}
 
 	pAnalyzer->EndAcquisition();
