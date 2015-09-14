@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\National Instruments\LabVIEW 2015\cintools&quot;;&quot;C:\Program Files (x86)\National Instruments\LabVIEW 2014\cintools&quot;;Inc"
+				AdditionalIncludeDirectories="Inc\labVIEW;Inc\usbdk"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;USBANALYZERELLISYSDLL_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\National Instruments\LabVIEW 2014\cintools&quot;;&quot;C:\Program Files (x86)\National Instruments\LabVIEW 2015\cintools&quot;;Lib"
+				AdditionalLibraryDirectories="Lib\labVIEW;Lib\usbdk"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -248,11 +248,11 @@
 				Name="Lib"
 				>
 				<File
-					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2014\cintools\labview.lib"
+					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2015\cintools\labview.lib"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2015\cintools\labview.lib"
+					RelativePath="..\..\..\..\..\..\Program Files (x86)\National Instruments\LabVIEW 2014\cintools\labview.lib"
 					>
 				</File>
 			</Filter>

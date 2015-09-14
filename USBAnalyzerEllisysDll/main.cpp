@@ -5,6 +5,7 @@
 #include "AnalyzerErrorNotifiacation.h"
 #include "SelectAndCreateAnalyzer.h"
 #include "Acquisition.h"
+#include "Displayers.h"
 #include <conio.h>
 #include <windows.h> 
 #include <extcode.h>

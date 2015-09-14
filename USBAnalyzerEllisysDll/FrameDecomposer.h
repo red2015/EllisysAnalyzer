@@ -15,7 +15,7 @@
 #include "UsbAnalyzerTracker110.h"
 #include "TransactionCounter.h"
 #include "StringConverter.h"
-#include "..\shared\Statistics.h"
+#include "Statistics.h"
 #include "TransactionCounter.h"
 
 static const BYTE max_frame_value = 255;
