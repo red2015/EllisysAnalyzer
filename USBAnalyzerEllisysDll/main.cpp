@@ -36,9 +36,10 @@ unsigned long g_packetsData1 = 0;
 unsigned long g_packetsHandshakeACK = 0;
 unsigned long g_packetsHandshakeNAK = 0;
 
-unsigned long long g_devicesPackets[128];
+unsigned long g_devicesPackets[128];
 int g_devices[128];
 int g_addr = 0;
+int g_countErrorOverflow = 0;
 
 
 void AnalyzerErrorNotification(usb_analyzer_error error, usb_analyzer_error_notification_param param, const void* param2)
@@ -61,6 +62,7 @@ void AnalyzerErrorNotification(usb_analyzer_error error, usb_analyzer_error_noti
 	if(error == 1)
 	{
 		g_overflowOccured = true;
+		g_countErrorOverflow++;
 	}
 
 	if(param2 != NULL)
@@ -140,6 +142,7 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 	g_overflowOccured = false;
 	
 	m_frameDecomposer.SetAllTrasactions(g_packetsTokenIn, g_packetsTokenOut,g_packetsTokenSetup, g_packetsTokenSOF, g_packetsData0, g_packetsData1, g_packetsHandshakeNAK, g_packetsHandshakeACK);
+	m_frameDecomposer.SetDevicesPackets(g_devicesPackets, g_devices);
 	sinkChainer.AddElementSink(&m_frameDecomposer);
 	_tprintf(_T("\n"));
 
@@ -286,32 +289,66 @@ GetCountAllTransactions(unsigned long *in, unsigned long  *out, unsigned long  *
 }
 
 extern "C" int _declspec(dllexport)
-GetDeviceTransactions(unsigned long long *transactions,int *devices, int *size)
+GetDeviceTransactions(unsigned  long *transactions,int *devices, int *size, unsigned  long *trans_, int* dev_)
 {
 	
-	unsigned long long *transactionsLocalCopy = g_devicesPackets;
+	unsigned long *transactionsLocalCopy = g_devicesPackets;
 	int *devicesLocalCopy = g_devices;
+	unsigned long trans[128];
+	int dev[128];
+	for(int k = 0; k < 128; k++)
+	{
+		trans[k] = 0;
+		dev[k] = 0;
+	}
 	int j =0;
 	for(int i = 0; i < 128; i++)
 	{
 		if(devicesLocalCopy[i] > 0)
 		{
+			trans[j] = transactionsLocalCopy[i];
+			dev[j] = i;
 			j++;
 		}
 	}
 	memcpy(transactions, transactionsLocalCopy, 128);
 	memcpy(devices, devicesLocalCopy, 128);
+	memcpy(trans_,trans, 128);
+	memcpy(dev_,dev, 128);
 	*size = j;
 	return g_addr;
 }
 
 extern "C" int _declspec(dllexport)
-VectorCopyTest(int *tab)
+ResetAll()
 {
-	std::vector<int> vector;
-	vector.push_back(10);
-	vector.push_back(20);
-	vector.push_back(30);
-	std::copy(vector.begin(), vector.end(), tab);
+	g_stopAcqusition = true;
+	for (int i = 0; i < 128; i++)
+	{
+		g_devices[i]= 0;
+		g_devicesPackets[i] = 0;
+	}
+	g_packetsTokenIn = 0;
+	g_packetsTokenOut = 0;
+	g_packetsTokenSetup = 0;
+	g_packetsTokenSOF = 0;
+	g_packetsData0 = 0;
+	g_packetsData1 = 0;
+	g_packetsHandshakeACK = 0;
+	g_packetsHandshakeNAK = 0;
+	for(int i =0; i < max_frame_bytecount; i++)
+	{
+		g_frameIn[i] = 0;
+		g_frameOut[i] = 0;
+		g_frameOut[i] = 0;
+	}
+	g_stopAcqusition = false;
+	return 0;
+}
+
+extern "C" int _declspec(dllexport)
+GetCountErrorOverflow(int *count)
+{
+	*count = g_countErrorOverflow;
 	return 0;
 }

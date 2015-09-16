@@ -33,7 +33,7 @@ private:
 	vector_byte m_frameOut;
 	vector_byte m_frameNak;
 	TransactionCounter transactionCounter;
-	unsigned long long devicesTransactions[128];
+	unsigned long devicesTransactions[128];
 	int devices[128];
 	usbdk::usb_time m_lastSofTime;
 	WORD m_sofCount;
@@ -181,11 +181,16 @@ public:
 	{
 		return transactionCounter.GetCountACK();
 	}
-	int GetDevicesPackets(unsigned long long *transactions_Devices, int *devices_)
+	int GetDevicesPackets(unsigned long *transactions_Devices, int *devices_)
 	{
 		memcpy(transactions_Devices, devicesTransactions,128);
 		memcpy(devices_, devices, 128);
 		return addr;
+	}
+	void SetDevicesPackets(unsigned long *transactions_Devices, int *devices_)
+	{
+		memcpy(devices, devices_, 128);
+		memcpy(devicesTransactions, transactions_Devices, 128);
 	}
 	void SetAllTrasactions(unsigned long in, unsigned long out, unsigned long setup, unsigned long sof, unsigned long data0, unsigned long data1, unsigned long nak, unsigned long ack)
 	{
