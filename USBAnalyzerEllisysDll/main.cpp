@@ -291,20 +291,16 @@ GetDeviceTransactions(unsigned long long *transactions,int *devices, int *size)
 	
 	unsigned long long *transactionsLocalCopy = g_devicesPackets;
 	int *devicesLocalCopy = g_devices;
-	unsigned long long preparedDataTrasactions[128];
-	int preparedDataDevices[128];
 	int j =0;
 	for(int i = 0; i < 128; i++)
 	{
 		if(devicesLocalCopy[i] > 0)
 		{
-			preparedDataTrasactions[j] = transactionsLocalCopy[i];
-			preparedDataDevices[j] = i;
 			j++;
 		}
 	}
-	memcpy(transactions, preparedDataTrasactions, 128);
-	memcpy(devices, preparedDataDevices, 128);
+	memcpy(transactions, transactionsLocalCopy, 128);
+	memcpy(devices, devicesLocalCopy, 128);
 	*size = j;
 	return g_addr;
 }
