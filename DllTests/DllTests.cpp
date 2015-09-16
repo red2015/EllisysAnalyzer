@@ -9,7 +9,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-
+#include <vector>
+#include <algorithm>
 typedef unsigned char   uint8_t;
 using namespace std;
 
@@ -21,6 +22,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	FindAnalyzer();
 	Acqusiton();
+	
 
 	return 0;
 }

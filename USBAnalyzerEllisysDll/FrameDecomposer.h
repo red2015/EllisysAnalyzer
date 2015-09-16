@@ -33,10 +33,12 @@ private:
 	vector_byte m_frameOut;
 	vector_byte m_frameNak;
 	TransactionCounter transactionCounter;
-
+	unsigned long long devicesTransactions[128];
+	int devices[128];
 	usbdk::usb_time m_lastSofTime;
 	WORD m_sofCount;
 	bool m_sofHighSpeed;
+	int addr;
 
 public:
 	UsbFrameDecomposer() :
@@ -48,6 +50,12 @@ public:
 		m_sofHighSpeed(false)
 	{
 		transactionCounter = TransactionCounter();
+		for(int i = 0; i < 128; i++)
+		{
+			devicesTransactions[i] = 0;
+			devices[i] = 0;
+		}
+		addr = 0;
 	}
 
 public:
@@ -76,7 +84,14 @@ public:
 		case usbdk::elementTransaction:
 			{
 				usbdk::UsbTransaction* transaction = (usbdk::UsbTransaction*) pElement;
-				printf("\ndeviceAdd: %d", (int)transaction->GetDeviceAddress());
+				int addrDevice = (int)transaction->GetDeviceAddress();
+				if(addrDevice > 0 && addrDevice < 128)
+				{
+					printf("\nDeviceAddrress: %d", addrDevice);
+					devices[addrDevice] = 1;
+					devicesTransactions[addrDevice]+= 1;
+					addr = addrDevice;
+				}
 				IncreaseTransaction((usbdk::UsbTransaction*) pElement, 10);
 				break;
 			}
@@ -84,7 +99,13 @@ public:
 		case usbdk::elementSplitTransaction:
 			{
 				usbdk::UsbSplitTransaction* splitTransaction = (usbdk::UsbSplitTransaction*) pElement;
-				printf("\nhubport: %d", (int)splitTransaction->GetSplitPacket().GetHubPort());
+				int addrHub = (int)splitTransaction->GetSplitHubAddress();
+				printf("\nHubAddress: %d", addrHub);
+				if(addrHub > 0 && addrHub < 128)
+				{
+					devicesTransactions[addrHub]+= 1;
+					devices[addrHub] = 1;
+				}
 				IncreaseSplitTransaction((usbdk::UsbSplitTransaction*) pElement, 10);
 				break;
 			}
@@ -160,7 +181,12 @@ public:
 	{
 		return transactionCounter.GetCountACK();
 	}
-
+	int GetDevicesPackets(unsigned long long *transactions_Devices, int *devices_)
+	{
+		memcpy(transactions_Devices, devicesTransactions,128);
+		memcpy(devices_, devices, 128);
+		return addr;
+	}
 	void SetAllTrasactions(unsigned long in, unsigned long out, unsigned long setup, unsigned long sof, unsigned long data0, unsigned long data1, unsigned long nak, unsigned long ack)
 	{
 		transactionCounter.SetActualTransactions(in, out, setup, sof, data0, data1, nak, ack);

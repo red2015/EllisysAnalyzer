@@ -36,6 +36,10 @@ unsigned long g_packetsData1 = 0;
 unsigned long g_packetsHandshakeACK = 0;
 unsigned long g_packetsHandshakeNAK = 0;
 
+unsigned long long g_devicesPackets[128];
+int g_devices[128];
+int g_addr = 0;
+
 
 void AnalyzerErrorNotification(usb_analyzer_error error, usb_analyzer_error_notification_param param, const void* param2)
 {
@@ -189,6 +193,7 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 		g_packetsData1 = m_frameDecomposer.GetCountTransactionsData1();
 		g_packetsHandshakeACK = m_frameDecomposer.GetCountTransactionsACK();
 		g_packetsHandshakeNAK = m_frameDecomposer.GetCountTransactionsNak();
+		g_addr = m_frameDecomposer.GetDevicesPackets(g_devicesPackets, g_devices);
 	}
 
 	pAnalyzer->EndAcquisition();
@@ -280,3 +285,37 @@ GetCountAllTransactions(unsigned long *in, unsigned long  *out, unsigned long  *
 	return 0;
 }
 
+extern "C" int _declspec(dllexport)
+GetDeviceTransactions(unsigned long long *transactions,int *devices, int *size)
+{
+	
+	unsigned long long *transactionsLocalCopy = g_devicesPackets;
+	int *devicesLocalCopy = g_devices;
+	unsigned long long preparedDataTrasactions[128];
+	int preparedDataDevices[128];
+	int j =0;
+	for(int i = 0; i < 128; i++)
+	{
+		if(devicesLocalCopy[i] > 0)
+		{
+			preparedDataTrasactions[j] = transactionsLocalCopy[i];
+			preparedDataDevices[j] = i;
+			j++;
+		}
+	}
+	memcpy(transactions, preparedDataTrasactions, 128);
+	memcpy(devices, preparedDataDevices, 128);
+	*size = j;
+	return g_addr;
+}
+
+extern "C" int _declspec(dllexport)
+VectorCopyTest(int *tab)
+{
+	std::vector<int> vector;
+	vector.push_back(10);
+	vector.push_back(20);
+	vector.push_back(30);
+	std::copy(vector.begin(), vector.end(), tab);
+	return 0;
+}

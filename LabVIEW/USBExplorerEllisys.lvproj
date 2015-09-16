@@ -14,6 +14,7 @@
 			<Item Name="Acqusiton.vi" Type="VI" URL="../Acqusiton.vi"/>
 			<Item Name="DecreaseFrame.vi" Type="VI" URL="../DecreaseFrame.vi"/>
 			<Item Name="FindAnalyzer.vi" Type="VI" URL="../FindAnalyzer.vi"/>
+			<Item Name="GetDeviceTransactions.vi" Type="VI" URL="../GetDeviceTransactions.vi"/>
 			<Item Name="GetFrameStatistics.vi" Type="VI" URL="../GetFrameStatistics.vi"/>
 			<Item Name="GetSerialNumber.vi" Type="VI" URL="../GetSerialNumber.vi"/>
 			<Item Name="StopAcquisition.vi" Type="VI" URL="../StopAcquisition.vi"/>
