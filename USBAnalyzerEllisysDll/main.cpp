@@ -9,36 +9,16 @@
 #include <conio.h>
 #include <windows.h> 
 #include <extcode.h>
-#include <iostream>
-#include <ctime>
-#include <time.h>
 using namespace usbdk;
 using namespace std;
 
 #define TEN_MILLISECUND 10
-
+UsbFrameDecomposer g_frameDecomposer;
 std::wstring g_serialNumber;
 RefCountPtr<IUsbAnalyzer> spAnalyzer;
 bool g_stopAcqusition = false;
 bool g_analyzerErrorOccured = false;
 bool g_overflowOccured = false;
-
-BYTE g_frameIn[max_frame_bytecount];
-BYTE g_frameOut[max_frame_bytecount];
-BYTE g_frameNak[max_frame_bytecount];
-
-unsigned long g_packetsTokenIn = 0;
-unsigned long g_packetsTokenOut = 0;
-unsigned long g_packetsTokenSetup = 0;
-unsigned long g_packetsTokenSOF = 0;
-unsigned long g_packetsData0 = 0;
-unsigned long g_packetsData1 = 0;
-unsigned long g_packetsHandshakeACK = 0;
-unsigned long g_packetsHandshakeNAK = 0;
-
-unsigned long g_devicesPackets[128];
-int g_devices[128];
-int g_addr = 0;
 int g_countErrorOverflow = 0;
 
 
@@ -135,15 +115,11 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 	//
 	// Prepare chainable element sinks
 	//
-	UsbFrameDecomposer m_frameDecomposer;
 	ChainableUsbElementSinkManager sinkChainer;
 	g_stopAcqusition = false;
 	g_analyzerErrorOccured = false;
 	g_overflowOccured = false;
-	
-	m_frameDecomposer.SetAllTrasactions(g_packetsTokenIn, g_packetsTokenOut,g_packetsTokenSetup, g_packetsTokenSOF, g_packetsData0, g_packetsData1, g_packetsHandshakeNAK, g_packetsHandshakeACK);
-	m_frameDecomposer.SetDevicesPackets(g_devicesPackets, g_devices);
-	sinkChainer.AddElementSink(&m_frameDecomposer);
+	sinkChainer.AddElementSink(&g_frameDecomposer);
 	_tprintf(_T("\n"));
 
 	//
@@ -164,9 +140,6 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 	{
 		_tprintf(_T("\nException caught!\n%s\n"), e.what());
 	}
-	int inc = 0;
-	clock_t actualTime, oldTime = clock();
-	printf("\nZapylam");
 	// Type a key to stop the acquisition...
 	for(;;)
 	{
@@ -180,25 +153,7 @@ void DoAcquisition(IUsbAnalyzer* pAnalyzer)
 		{
 			break;
 		}
-		actualTime = clock();
-		
-		if(long(actualTime-oldTime) > TEN_MILLISECUND)
-		{
-			m_frameDecomposer.DecreaseAll();
-			oldTime = actualTime;
-		}
-		m_frameDecomposer.GetFrame(g_frameIn, g_frameOut, g_frameNak);
-		g_packetsTokenIn = m_frameDecomposer.GetCountTransactionsIn();
-		g_packetsTokenOut = m_frameDecomposer.GetCountTransactionsOut();
-		g_packetsTokenSetup = m_frameDecomposer.GetCountTransactionsTokenSetup();
-		g_packetsTokenSOF = m_frameDecomposer.GetCountTransactionsTokenSOF();
-		g_packetsData0 = m_frameDecomposer.GetCountTransactionsData0();
-		g_packetsData1 = m_frameDecomposer.GetCountTransactionsData1();
-		g_packetsHandshakeACK = m_frameDecomposer.GetCountTransactionsACK();
-		g_packetsHandshakeNAK = m_frameDecomposer.GetCountTransactionsNak();
-		g_addr = m_frameDecomposer.GetDevicesPackets(g_devicesPackets, g_devices);
 	}
-
 	pAnalyzer->EndAcquisition();
 }
 
@@ -247,14 +202,12 @@ Acqusiton()
 
 
 extern "C" int _declspec(dllexport)
-GetFrameStatistics(uint8_t *frameIn[], uint8_t *frameOut[], uint8_t *frameNak[], size_t *sizeFrameIn, size_t *sizeFrameOut, size_t *sizeFrameNak)
+GetFrameStatistics(uint8_t *frameIn, uint8_t *frameOut, uint8_t *frameNak, size_t *sizeFrameIn, size_t *sizeFrameOut, size_t *sizeFrameNak)
 {		
 	*sizeFrameIn = sizeof(unsigned char)* max_frame_bytecount;
 	*sizeFrameOut = sizeof(unsigned char)* max_frame_bytecount;
 	*sizeFrameNak = sizeof(unsigned char)* max_frame_bytecount;
-	memcpy(frameIn, g_frameIn, max_frame_bytecount);
-	memcpy(frameOut, g_frameOut, max_frame_bytecount);
-	memcpy(frameNak, g_frameNak, max_frame_bytecount);
+	g_frameDecomposer.GetFrame(frameIn,frameOut,frameNak);
 	return 0;
 }
 
@@ -268,23 +221,23 @@ StopAcqusiton()
 extern "C" int _declspec(dllexport)
 GetCountOfTransactionInOutNak(unsigned long *in, unsigned long *out, unsigned long *nak)
 {
-	*in = g_packetsTokenIn;
-	*out = g_packetsTokenOut;
-	*nak = g_packetsHandshakeNAK;
+	*in = g_frameDecomposer.GetCountTransactionsIn();
+	*out = g_frameDecomposer.GetCountTransactionsOut();
+	*nak = g_frameDecomposer.GetCountTransactionsNak();
 	return 0;
 }
 
 extern "C" int _declspec(dllexport)
 GetCountAllTransactions(unsigned long *in, unsigned long  *out, unsigned long  *setup, unsigned long  *sof, unsigned long  *data0, unsigned long  *data1, unsigned long  *ack, unsigned long  *nak)
 {
-	*in = g_packetsTokenIn;
-	*out = g_packetsTokenOut;
-	*setup = g_packetsTokenSetup;
-	*sof = g_packetsTokenSOF;
-	*data0 = g_packetsData0;
-	*data1 = g_packetsData1;
-	*ack = g_packetsHandshakeACK;
-	*nak = g_packetsHandshakeNAK;
+	*in = g_frameDecomposer.GetCountTransactionsIn();
+	*out = g_frameDecomposer.GetCountTransactionsOut();
+	*setup = g_frameDecomposer.GetCountTransactionsTokenSetup();
+	*sof = g_frameDecomposer.GetCountTransactionsTokenSOF();
+	*data0 = g_frameDecomposer.GetCountTransactionsData0();
+	*data1 = g_frameDecomposer.GetCountTransactionsData1();
+	*ack = g_frameDecomposer.GetCountTransactionsACK();
+	*nak = g_frameDecomposer.GetCountTransactionsNak();
 	return 0;
 }
 
@@ -292,8 +245,9 @@ extern "C" int _declspec(dllexport)
 GetDeviceTransactions(unsigned  long *transactions,int *devices, int *size, unsigned  long *trans_, int* dev_)
 {
 	
-	unsigned long *transactionsLocalCopy = g_devicesPackets;
-	int *devicesLocalCopy = g_devices;
+	unsigned long transactionsLocalCopy[128];
+	int devicesLocalCopy[128];
+	g_frameDecomposer.GetDevicesPackets(transactionsLocalCopy,devicesLocalCopy);
 	unsigned long trans[128];
 	int dev[128];
 	for(int k = 0; k < 128; k++)
@@ -316,39 +270,18 @@ GetDeviceTransactions(unsigned  long *transactions,int *devices, int *size, unsi
 	memcpy(trans_,trans, 128);
 	memcpy(dev_,dev, 128);
 	*size = j;
-	return g_addr;
-}
-
-extern "C" int _declspec(dllexport)
-ResetAll()
-{
-	g_stopAcqusition = true;
-	for (int i = 0; i < 128; i++)
-	{
-		g_devices[i]= 0;
-		g_devicesPackets[i] = 0;
-	}
-	g_packetsTokenIn = 0;
-	g_packetsTokenOut = 0;
-	g_packetsTokenSetup = 0;
-	g_packetsTokenSOF = 0;
-	g_packetsData0 = 0;
-	g_packetsData1 = 0;
-	g_packetsHandshakeACK = 0;
-	g_packetsHandshakeNAK = 0;
-	for(int i =0; i < max_frame_bytecount; i++)
-	{
-		g_frameIn[i] = 0;
-		g_frameOut[i] = 0;
-		g_frameOut[i] = 0;
-	}
-	g_stopAcqusition = false;
 	return 0;
 }
-
 extern "C" int _declspec(dllexport)
 GetCountErrorOverflow(int *count)
 {
 	*count = g_countErrorOverflow;
+	return 0;
+}
+
+extern "C" int _declspec(dllexport)
+DecreaseAll()
+{
+	g_frameDecomposer.DecreaseAll();
 	return 0;
 }

@@ -38,7 +38,6 @@ private:
 	usbdk::usb_time m_lastSofTime;
 	WORD m_sofCount;
 	bool m_sofHighSpeed;
-	int addr;
 
 public:
 	UsbFrameDecomposer() :
@@ -55,7 +54,6 @@ public:
 			devicesTransactions[i] = 0;
 			devices[i] = 0;
 		}
-		addr = 0;
 	}
 
 public:
@@ -82,33 +80,12 @@ public:
 			break;
 
 		case usbdk::elementTransaction:
-			{
-				usbdk::UsbTransaction* transaction = (usbdk::UsbTransaction*) pElement;
-				int addrDevice = (int)transaction->GetDeviceAddress();
-				if(addrDevice > 0 && addrDevice < 128)
-				{
-					printf("\nDeviceAddrress: %d", addrDevice);
-					devices[addrDevice] = 1;
-					devicesTransactions[addrDevice]+= 1;
-					addr = addrDevice;
-				}
-				IncreaseTransaction((usbdk::UsbTransaction*) pElement, 10);
-				break;
-			}
+			IncreaseTransaction((usbdk::UsbTransaction*) pElement, 10);
+			break;
 
 		case usbdk::elementSplitTransaction:
-			{
-				usbdk::UsbSplitTransaction* splitTransaction = (usbdk::UsbSplitTransaction*) pElement;
-				int addrHub = (int)splitTransaction->GetSplitHubAddress();
-				printf("\nHubAddress: %d", addrHub);
-				if(addrHub > 0 && addrHub < 128)
-				{
-					devicesTransactions[addrHub]+= 1;
-					devices[addrHub] = 1;
-				}
-				IncreaseSplitTransaction((usbdk::UsbSplitTransaction*) pElement, 10);
-				break;
-			}
+			IncreaseSplitTransaction((usbdk::UsbSplitTransaction*) pElement, 10);
+			break;
 
 		case usbdk::elementReset:
 			Clear();
@@ -181,20 +158,10 @@ public:
 	{
 		return transactionCounter.GetCountACK();
 	}
-	int GetDevicesPackets(unsigned long *transactions_Devices, int *devices_)
+	void GetDevicesPackets(unsigned long *transactions_Devices, int *devices_)
 	{
 		memcpy(transactions_Devices, devicesTransactions,128);
 		memcpy(devices_, devices, 128);
-		return addr;
-	}
-	void SetDevicesPackets(unsigned long *transactions_Devices, int *devices_)
-	{
-		memcpy(devices, devices_, 128);
-		memcpy(devicesTransactions, transactions_Devices, 128);
-	}
-	void SetAllTrasactions(unsigned long in, unsigned long out, unsigned long setup, unsigned long sof, unsigned long data0, unsigned long data1, unsigned long nak, unsigned long ack)
-	{
-		transactionCounter.SetActualTransactions(in, out, setup, sof, data0, data1, nak, ack);
 	}
 
 private:
@@ -240,7 +207,9 @@ private:
 	void IncreaseTransaction(usbdk::UsbTransaction* pTransaction, BYTE count)
 	{
 		vector_byte* pFrame = NULL;
-
+		int addrDevice = (int)pTransaction->GetDeviceAddress();
+		devices[addrDevice] = 1;
+		devicesTransactions[addrDevice]+= 1;
 		if(pTransaction->GetHandshakePacket().GetPID() == usbdk::pidNAK)
 		{
 			pFrame = &m_frameNak;
@@ -289,6 +258,9 @@ private:
 	void IncreaseSplitTransaction(usbdk::UsbSplitTransaction* pSplitTransaction, BYTE count)
 	{
 		vector_byte* pFrame = NULL;
+		int addrHub = (int)pSplitTransaction->GetSplitHubAddress();
+		devicesTransactions[addrHub]+= 1;
+		devices[addrHub] = 1;
 		
 		if(pSplitTransaction->GetHandshakePacket().GetPID() == usbdk::pidNAK)
 		{
@@ -326,9 +298,7 @@ private:
 			if(pSplitTransaction->GetDataPacket().GetPID() == usbdk::pidDATA1)
 			{
 				transactionCounter.IncrementData1();
-			}
-			
-			
+			}			
 		}
 
 		ASSERT(pFrame != NULL);

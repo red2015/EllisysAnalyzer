@@ -37,7 +37,9 @@
 		</Item>
 		<Item Name="Tests" Type="Folder">
 			<Item Name="ChartTesting.vi" Type="VI" URL="../ChartTesting.vi"/>
+			<Item Name="testVector.vi" Type="VI" URL="../testVector.vi"/>
 		</Item>
+		<Item Name="GetCountOverflow.vi" Type="VI" URL="../GetCountOverflow.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
 				<Item Name="Draw Arc.vi" Type="VI" URL="/&lt;vilib&gt;/picture/picture.llb/Draw Arc.vi"/>
@@ -47,6 +49,20 @@
 			</Item>
 			<Item Name="USBAnalyzerEllisysDll.dll" Type="Document" URL="../../USBAnalyzerEllisysDll/Debug/USBAnalyzerEllisysDll.dll"/>
 		</Item>
-		<Item Name="Build Specifications" Type="Build"/>
+		<Item Name="Build Specifications" Type="Build">
+			<Item Name="My Zip File" Type="Zip File">
+				<Property Name="Absolute[0]" Type="Bool">false</Property>
+				<Property Name="BuildName" Type="Str">My Zip File</Property>
+				<Property Name="Comments" Type="Str"></Property>
+				<Property Name="DestinationID[0]" Type="Str">{BCEC828C-350A-4310-B572-7A00CECA037A}</Property>
+				<Property Name="DestinationItemCount" Type="Int">1</Property>
+				<Property Name="DestinationName[0]" Type="Str">Destination Directory</Property>
+				<Property Name="IncludedItemCount" Type="Int">1</Property>
+				<Property Name="IncludedItems[0]" Type="Ref">/My Computer</Property>
+				<Property Name="IncludeProject" Type="Bool">true</Property>
+				<Property Name="Path[0]" Type="Path">../../builds/USBExplorerEllisys/My Zip File/USBExplorerEllisys.zip</Property>
+				<Property Name="ZipBase" Type="Str">NI_zipbasedefault</Property>
+			</Item>
+		</Item>
 	</Item>
 </Project>
