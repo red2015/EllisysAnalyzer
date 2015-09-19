@@ -256,7 +256,7 @@ GetDeviceTransactions(unsigned  long *transactions,int *devices, int *size, unsi
 		dev[k] = 0;
 	}
 	int j =0;
-	for(int i = 0; i < 128; i++)
+	for(int i = 1; i < 128; i++)
 	{
 		if(devicesLocalCopy[i] > 0)
 		{
