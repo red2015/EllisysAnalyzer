@@ -35,6 +35,8 @@ private:
 	TransactionCounter transactionCounter;
 	unsigned long devicesTransactions[128];
 	int devices[128];
+	unsigned long devicesTransactionsCopy[128];
+	int devicesCopy[128];
 	usbdk::usb_time m_lastSofTime;
 	WORD m_sofCount;
 	bool m_sofHighSpeed;
@@ -53,6 +55,8 @@ public:
 		{
 			devicesTransactions[i] = 0;
 			devices[i] = 0;
+			devicesTransactionsCopy[i] = 0;
+			devicesCopy[i] = 0;
 		}
 	}
 
@@ -160,8 +164,23 @@ public:
 	}
 	void GetDevicesPackets(unsigned long *transactions_Devices, int *devices_)
 	{
-		memcpy(transactions_Devices, devicesTransactions,128);
-		memcpy(devices_, devices, 128);
+		int j = 0;
+		for(int i = 0; i < 128; i++)
+		{
+			devicesCopy[i] = 0;
+			devicesTransactionsCopy[i] = 0;
+		}
+		for(int i = 1; i < 128; i++)
+		{
+			if(devices[i] > 0)
+			{
+				devicesTransactionsCopy[j] = devicesTransactions[i];
+				devicesCopy[j] = i;
+				j++;
+			}
+		}
+		memcpy(transactions_Devices, devicesTransactionsCopy,128);
+		memcpy(devices_, devicesCopy, 128);
 	}
 
 private:

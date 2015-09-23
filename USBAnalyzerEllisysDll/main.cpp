@@ -242,34 +242,9 @@ GetCountAllTransactions(unsigned long *in, unsigned long  *out, unsigned long  *
 }
 
 extern "C" int _declspec(dllexport)
-GetDeviceTransactions(unsigned  long *transactions,int *devices, int *size, unsigned  long *trans_, int* dev_)
+GetDeviceTransactions(unsigned  long *transactions,int *devices)
 {
-	
-	unsigned long transactionsLocalCopy[128];
-	int devicesLocalCopy[128];
-	g_frameDecomposer.GetDevicesPackets(transactionsLocalCopy,devicesLocalCopy);
-	unsigned long trans[128];
-	int dev[128];
-	for(int k = 0; k < 128; k++)
-	{
-		trans[k] = 0;
-		dev[k] = 0;
-	}
-	int j =0;
-	for(int i = 1; i < 128; i++)
-	{
-		if(devicesLocalCopy[i] > 0)
-		{
-			trans[j] = transactionsLocalCopy[i];
-			dev[j] = i;
-			j++;
-		}
-	}
-	memcpy(transactions, transactionsLocalCopy, 128);
-	memcpy(devices, devicesLocalCopy, 128);
-	memcpy(trans_,trans, 128);
-	memcpy(dev_,dev, 128);
-	*size = j;
+	g_frameDecomposer.GetDevicesPackets(transactions, devices);
 	return 0;
 }
 extern "C" int _declspec(dllexport)
